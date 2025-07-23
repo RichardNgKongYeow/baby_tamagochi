@@ -29,13 +29,33 @@ class TelegramBot:
         except Exception as e:
             print(f"Failed to send message: {e}")
 
+    def send_chat_action(self, chat_id, action):
+        try:
+            requests.post(
+                f"{self.base_url}/sendChatAction",
+                json={"chat_id": chat_id, "action": action},
+                timeout=5
+            )
+        except Exception as e:
+            print(f"Failed to send chat action: {e}")
+
     def handle_message(self, message):
         chat_id = message["chat"]["id"]
         text = message.get("text", "")
         print(f"User: {text}")
         if not text:
             return
-        reply = deepseek_chat(text)
+
+        # Show typing indicator
+        self.send_chat_action(chat_id, "typing")
+
+        try:
+            reply = deepseek_chat(text, timeout=60)  # You can adjust this timeout
+        except requests.exceptions.Timeout:
+            reply = "⚠️ DeepSeek took too long to respond. Please try again later."
+        except Exception as e:
+            reply = f"❌ Error talking to DeepSeek: {e}"
+
         self.send_message(chat_id, reply)
 
     def run(self):
