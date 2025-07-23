@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
+# deepseek.py
 import subprocess
 import time
 import requests
 import platform
 import os
-import sys
 import websocket
 
 
@@ -112,7 +111,7 @@ def is_websocket_alive():
         print(f"WebSocket check failed: {e}")
         return False
 
-def run_webui(userid, password):
+def run_webui(userid,password):
     print("Cleaning up old WebUI container...")
     subprocess.run(["docker", "rm", "-f", "open-webui"], capture_output=True, text=True)
 
@@ -152,30 +151,3 @@ def run_webui(userid, password):
 
     print("WebUI is running and reachable.")
     return True
-
-def main():
-    try:
-        if not run_docker_desktop():
-            raise SystemExit("Docker not ready.")
-        if not run_deepseek():
-            raise SystemExit("DeepSeek failed to launch.")
-        if not wait_for_deepseek():
-            raise SystemExit("DeepSeek not responding.")
-        if not run_webui():
-            raise SystemExit("WebUI failed.")
-        print("✅ DeepSeek and WebUI are up and ready to use!")
-        while True:
-            time.sleep(60)
-    except KeyboardInterrupt:
-        print("Shutting down...")
-        subprocess.run(["docker", "stop", "open-webui"], capture_output=True)
-        subprocess.run(["docker", "rm", "open-webui"], capture_output=True)
-        sys.exit(0)
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        subprocess.run(["docker", "stop", "open-webui"], capture_output=True)
-        subprocess.run(["docker", "rm", "open-webui"], capture_output=True)
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
