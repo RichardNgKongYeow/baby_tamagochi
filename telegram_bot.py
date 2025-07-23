@@ -1,19 +1,16 @@
-# telegram_bot.py
 import requests
 import time
-from configs import BOT_TOKEN
 from deepseek import chat as deepseek_chat
 
-BASE_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
-
 class TelegramBot:
-    def __init__(self):
+    def __init__(self, bot_token):
         self.offset = None  # Keeps track of last message seen
+        self.base_url = f"https://api.telegram.org/bot{bot_token}"
 
     def get_updates(self):
         try:
             response = requests.get(
-                f"{BASE_URL}/getUpdates",
+                f"{self.base_url}/getUpdates",
                 params={"timeout": 60, "offset": self.offset},
                 timeout=65
             )
@@ -25,7 +22,7 @@ class TelegramBot:
     def send_message(self, chat_id, text):
         try:
             requests.post(
-                f"{BASE_URL}/sendMessage",
+                f"{self.base_url}/sendMessage",
                 json={"chat_id": chat_id, "text": text},
                 timeout=10
             )
