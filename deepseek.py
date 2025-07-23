@@ -151,3 +151,20 @@ def run_webui(userid,password):
 
     print("WebUI is running and reachable.")
     return True
+
+
+def chat(prompt: str) -> str:
+    try:
+        r = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "deepseek-r1:8b",
+                "prompt": prompt,
+                "stream": False
+            },
+            timeout=30
+        )
+        r.raise_for_status()
+        return r.json().get("response", "").strip()
+    except Exception as e:
+        return f"Error generating response: {str(e)}"

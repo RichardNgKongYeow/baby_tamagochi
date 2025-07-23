@@ -1,3 +1,4 @@
+# telegram_bot.py
 import requests
 import time
 from configs import BOT_TOKEN
@@ -7,31 +8,41 @@ BASE_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 class TelegramBot:
     def __init__(self):
-        self.offset = None  # Used to keep track of processed messages
+        self.offset = None  # Keeps track of last message seen
 
     def get_updates(self):
-        url = f"{BASE_URL}/getUpdates"
-        params = {"timeout": 60, "offset": self.offset}
-        response = requests.get(url, params=params)
-        return response.json()
+        try:
+            response = requests.get(
+                f"{BASE_URL}/getUpdates",
+                params={"timeout": 60, "offset": self.offset},
+                timeout=65
+            )
+            return response.json()
+        except Exception as e:
+            print(f"Failed to fetch updates: {e}")
+            return {"ok": False, "result": []}
 
     def send_message(self, chat_id, text):
-        url = f"{BASE_URL}/sendMessage"
-        payload = {"chat_id": chat_id, "text": text}
-        requests.post(url, json=payload)
+        try:
+            requests.post(
+                f"{BASE_URL}/sendMessage",
+                json={"chat_id": chat_id, "text": text},
+                timeout=10
+            )
+        except Exception as e:
+            print(f"Failed to send message: {e}")
 
     def handle_message(self, message):
         chat_id = message["chat"]["id"]
-        if "text" in message:
-            user_input = message["text"]
-            try:
-                response = deepseek_chat(user_input)
-            except Exception as e:
-                response = f"Error: {str(e)}"
-            self.send_message(chat_id, response)
+        text = message.get("text", "")
+        print(f"User: {text}")
+        if not text:
+            return
+        reply = deepseek_chat(text)
+        self.send_message(chat_id, reply)
 
     def run(self):
-        print("🤖 Bot is running...")
+        print("🤖 Telegram bot is now running...")
         while True:
             updates = self.get_updates()
             if updates.get("ok"):
