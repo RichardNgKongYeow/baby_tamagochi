@@ -1,6 +1,13 @@
 from telegram_bot import TelegramBot
-from configs import BOT_TOKEN
 import deepseek
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure API keys
+tele_bot_api_key = os.getenv("TELE_BOT_TOKEN")
 
 if __name__ == "__main__":
     print("🚀 Launching DeepSeek...")
@@ -16,5 +23,5 @@ if __name__ == "__main__":
         exit(1)
 
     print("✅ DeepSeek is ready. Launching Telegram bot...")
-    bot = TelegramBot(bot_token=BOT_TOKEN)
+    bot = TelegramBot(bot_token=tele_bot_api_key)
     bot.run()

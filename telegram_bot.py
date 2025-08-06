@@ -50,9 +50,7 @@ class TelegramBot:
         self.send_chat_action(chat_id, "typing")
 
         try:
-            reply = deepseek_chat(text, timeout=60)  # You can adjust this timeout
-        except requests.exceptions.Timeout:
-            reply = "⚠️ DeepSeek took too long to respond. Please try again later."
+            reply = deepseek_chat(text)  # Removed timeout parameter
         except Exception as e:
             reply = f"❌ Error talking to DeepSeek: {e}"
 
