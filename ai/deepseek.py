@@ -2,7 +2,6 @@ import subprocess
 import time
 import requests
 import platform
-import os
 import websocket
 
 

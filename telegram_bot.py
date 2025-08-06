@@ -1,6 +1,6 @@
 import requests
 import time
-from deepseek import chat as deepseek_chat
+from ai.deepseek import chat as deepseek_chat
 
 class TelegramBot:
     def __init__(self, bot_token):

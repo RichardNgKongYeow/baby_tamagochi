@@ -1,5 +1,5 @@
 from telegram_bot import TelegramBot
-import deepseek
+import ai.deepseek as deepseek
 from dotenv import load_dotenv
 import os
 
